@@ -1,0 +1,62 @@
+name: Deploy Glue Jobs (DEV)
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - "glue-scripts/dev/**"
+      - "envs/dev/**"
+      - "modules/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Detect changed Glue scripts
+        id: changes
+        run: |
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+            | grep '^glue-scripts/dev/' || true > changed_files.txt
+
+          echo "Changed files:"
+          cat changed_files.txt
+
+      - name: Upload changed Glue scripts to S3
+        run: |
+          if [ -s changed_files.txt ]; then
+            while read file; do
+              echo "Uploading $file"
+              aws s3 cp "$file" "s3://nagarro-glue-jobs/${file#glue-scripts/}"
+            done < changed_files.txt
+          else
+            echo "No Glue scripts changed"
+          fi
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: envs/dev
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: envs/dev
+        run: terraform plan
+
+      - name: Terraform Apply
+        working-directory: envs/dev
+        run: terraform apply -auto-approve
