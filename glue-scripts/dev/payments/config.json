@@ -1,0 +1,5 @@
+{
+  "cdc_column": "op",
+  "timestamp_column": "event_ts",
+  "target_table": "gold_payments"
+}

@@ -6,9 +6,11 @@ args = getResolvedOptions(
     ['env', 'job_type', 'config']
 )
 
-print("===== ORDERS JOB =====")
+print("===== PAYMENTS JOB =====")
 print("ENV:", args['env'])
 print("TYPE:", args['job_type'])
-print("CONFIG:", args['config'])
 
-print("Processing only NEW / UPDATED orders...")
+print("Applying CDC logic:")
+print("I -> Insert")
+print("U -> Update")
+print("D -> Delete")

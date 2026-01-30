@@ -6,9 +6,9 @@ args = getResolvedOptions(
     ['env', 'job_type', 'config']
 )
 
-print("===== ORDERS JOB =====")
+print("===== CUSTOMERS JOB =====")
 print("ENV:", args['env'])
 print("TYPE:", args['job_type'])
-print("CONFIG:", args['config'])
 
-print("Processing only NEW / UPDATED orders...")
+print("Running FULL refresh of customers table...")
+print("Deleting old data and reloading everything")

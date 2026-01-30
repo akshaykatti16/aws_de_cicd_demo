@@ -1,4 +1,5 @@
 {
-  "source": "orders",
-  "load_type": "incremental"
+  "primary_key": "order_id",
+  "watermark_column": "updated_at",
+  "target_table": "silver_orders"
 }
