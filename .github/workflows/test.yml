@@ -15,6 +15,15 @@ jobs:
       
       - name: START
         run: echo "CICD Deployment in progress.."
+      
+      - name: Detect changed Glue scripts
+        id: changes
+        run: |
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+            | grep '^glue-scripts/dev/' || true > changed_files.txt
+
+          echo "Changed files:"
+          cat changed_files.txt
 
       - name: Terraform Init
         working-directory: envs/dev
@@ -23,3 +32,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: terraform init
+        
+      - name: END
+        run: echo "CICD Deployment in completed!!"
