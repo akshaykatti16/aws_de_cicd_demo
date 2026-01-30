@@ -4,11 +4,7 @@ on:
   push:
     branches:
       - dev
-    paths:
-      - "envs/dev/**"
-      - "modules/**"
-      - "glue-scripts/dev/**"
-
+      
 jobs:
   deploy:
     runs-on: ubuntu-latest
