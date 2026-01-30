@@ -1,0 +1,4 @@
+{
+  "source": "orders",
+  "load_type": "incremental"
+}
