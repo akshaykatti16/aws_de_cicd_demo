@@ -33,6 +33,6 @@ primary_key = config["primary_key"]
 watermark_column = config["watermark_column"]
 target_table = config["target_table"]
 
-print("Primary Key:", primary_key)
-print("Watermark Column:", watermark_column)
-print("Target Table:", target_table)
+print("Primary Key ----- ", primary_key)
+print("Watermark Column --- ", watermark_column)
+print("Target Table ------ ", target_table)

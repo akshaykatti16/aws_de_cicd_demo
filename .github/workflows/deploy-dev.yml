@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with: 
+          fetch-depth: 0
 
       - uses: hashicorp/setup-terraform@v3
       
@@ -26,9 +28,9 @@ jobs:
       - name: Detect changed Glue scripts
         id: changes
         run: |
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+          git diff --name-only HEAD~1 HEAD \
             | grep '^glue-scripts/dev/' || true > changed_files.txt
-            
+          
           if [ ! -s changed_files.txt ]; then
            echo "No changes detected — uploading ALL Glue scripts"
            find glue-scripts/dev -type f \( -name "*.py" -o -name "*.json" \) > changed_files.txt
