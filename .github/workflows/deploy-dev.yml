@@ -1,62 +1,42 @@
-name: Deploy Glue Jobs (DEV)
+name: Deploy Glue Jobs (DEV) 
 
 on:
   push:
     branches:
       - dev
-    paths:
-      - "glue-scripts/dev/**"
-      - "envs/dev/**"
-      - "modules/**"
-
+      
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v3
 
-      - name: Configure AWS creds
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+      - uses: hashicorp/setup-terraform@v3
+      
+      - name: START
+        run: echo "CICD Deployment in progress.."
 
       - name: Detect changed Glue scripts
         id: changes
         run: |
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
             | grep '^glue-scripts/dev/' || true > changed_files.txt
-
-          echo "Changed files:"
-          cat changed_files.txt
-
-      - name: Upload changed Glue scripts to S3
-        run: |
-          if [ -s changed_files.txt ]; then
-            while read file; do
-              echo "Uploading $file"
-              aws s3 cp "$file" "s3://nagarro-glue-jobs/${file#glue-scripts/}"
-            done < changed_files.txt
-          else
-            echo "No Glue scripts changed"
+            
+          if [ ! -s changed_files.txt ]; then
+           echo "No changes detected — uploading ALL Glue scripts"
+           find glue-scripts/dev -type f -name "*.py" > changed_files.txt
           fi
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+          
+          echo "Files to upload:"
+          cat changed_files.txt
 
       - name: Terraform Init
         working-directory: envs/dev
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: terraform init
-
-      - name: Terraform Plan
-        working-directory: envs/dev
-        run: terraform plan
-
-      - name: Terraform Apply
-        working-directory: envs/dev
-        run: terraform apply -auto-approve
+        
+      - name: END
+        run: echo "CICD Deployment in completed!!"
