@@ -7,8 +7,8 @@ args = getResolvedOptions(
 )
 
 print("===== PAYMENTS JOB =====")
-print("ENV:", args['env'])
-print("TYPE:", args['job_type'])
+print("ENV --- ", args['env'])
+print("TYPE --- ", args['job_type'])
 
 print("Applying CDC logic:")
 print("I -> Insert")

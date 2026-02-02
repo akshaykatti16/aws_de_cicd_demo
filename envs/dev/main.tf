@@ -68,8 +68,8 @@ module "payments_glue_job" {
   role_arn        = var.glue_role_arn
 
   default_arguments = {
-    "--env"       = "dev"
-    "--job_type"  = "cdc"
+    "--env"       = "dev5"
+    "--job_type"  = "changedatacapture"
     "--config"    = "s3://${var.script_bucket}/dev/payments/config.json"
   }
 }
