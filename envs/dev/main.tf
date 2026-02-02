@@ -20,8 +20,8 @@ module "orders_glue_job" {
   role_arn        = var.glue_role_arn
 
   default_arguments = {
-    "--env"       = "dev"
-    "--job_type"  = "incremental"
+    "--env"       = "dev2"
+    "--job_type"  = "INC"
     "--config"    = "s3://${var.script_bucket}/dev/orders/config.json"
   }
 }

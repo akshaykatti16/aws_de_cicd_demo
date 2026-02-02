@@ -1,5 +1,5 @@
 {
   "primary_key": "order_id",
-  "watermark_column": "updated_at",
+  "watermark_column": "modified_at",
   "target_table": "silver_orders"
 }
