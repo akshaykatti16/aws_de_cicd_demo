@@ -24,7 +24,7 @@ jobs:
             
           if [ ! -s changed_files.txt ]; then
            echo "No changes detected — uploading ALL Glue scripts"
-           find glue-scripts/dev -type f -name "*.py" > changed_files.txt
+           find glue-scripts/dev -type f \( -name "*.py" -o -name "*.json" \) > changed_files.txt
           fi
           
           echo "Files to upload:"
@@ -38,5 +38,20 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: terraform init
         
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         aws-region: ${{ secrets.AWS_REGION }}
+      
+      - name: Terraform Plan
+        working-directory: envs/dev
+        run: terraform plan
+
+      - name: Terraform Apply
+        working-directory: envs/dev
+        run: terraform apply -auto-approve
+  
       - name: END
         run: echo "CICD Deployment in completed!!"
