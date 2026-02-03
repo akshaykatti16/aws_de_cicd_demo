@@ -3,3 +3,7 @@ variable "handler" {}
 variable "runtime" { default = "python3.10" }
 variable "zip_path" {}
 variable "glue_job_name" {}
+variable "lambda_role_arn" {
+  description = "Existing IAM role ARN for Lambda"
+  type        = string
+}

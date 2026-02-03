@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "this" {
   function_name = var.function_name
-  role          = aws_iam_role.lambda_role.arn
+  role 			= var.lambda_role_arn
   handler       = var.handler
   runtime       = var.runtime
 

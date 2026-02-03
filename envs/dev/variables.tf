@@ -9,3 +9,7 @@ variable "script_bucket" {
 variable "glue_role_arn" {
   type = string
 }
+
+variable "lambda_role_arn" {
+  type = string
+}
