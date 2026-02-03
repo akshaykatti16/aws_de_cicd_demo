@@ -42,7 +42,7 @@ jobs:
       - name: Package Lambda function
         run: |
          mkdir -p lambda/dev/build
-         cd lambda/dev/file_listener
+         cd lambda/dev/file-listener
          zip -r ../build/file_listener.zip .
 
       - name: Show Lambda artifact
