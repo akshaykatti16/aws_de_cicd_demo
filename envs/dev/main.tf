@@ -84,5 +84,5 @@ module "file_listener_lambda" {
   function_name  = "file-listener-dev"
   handler        = "handler.lambda_handler"
   zip_path       = "${path.module}/../../lambda/dev/build/file_listener.zip"
-  glue_job_name  = module.glue_job.job_name
+  glue_job_name  = module.payments_glue_job.job_name
 }
