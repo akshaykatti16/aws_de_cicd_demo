@@ -73,3 +73,16 @@ module "payments_glue_job" {
     "--config"    = "s3://${var.script_bucket}/dev/payments/config.json"
   }
 }
+
+####################################
+# lambda function for PAYMENTS JOB #
+####################################
+
+module "file_listener_lambda" {
+  source = "../../modules/lambda-function"
+
+  function_name  = "file-listener-dev"
+  handler        = "handler.lambda_handler"
+  zip_path       = "${path.module}/../../lambda/dev/build/file_listener.zip"
+  glue_job_name  = module.glue_job.job_name
+}

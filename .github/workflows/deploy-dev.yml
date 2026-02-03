@@ -53,6 +53,15 @@ jobs:
           echo "Uploading $file"
           aws s3 cp "$file" "s3://nagarro-glue-jobs/${file#glue-scripts/}"
          done < changed_files.txt
+         
+      - name: Package Lambda function
+        run: |
+         mkdir -p lambda/dev/build
+         cd lambda/dev/file_listener
+         zip -r ../build/file_listener.zip .
+
+      - name: Show Lambda artifact
+        run: ls -lh lambda/dev/build
 
       - name: Terraform Apply
         working-directory: envs/dev
