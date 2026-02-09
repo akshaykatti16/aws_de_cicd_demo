@@ -29,6 +29,8 @@ jobs:
         id: changes
         run: |
           git diff --name-only HEAD~1 HEAD \
+            | grep '^glue-scripts/dev/' > changed_files.txt || true
+          git diff --name-only HEAD~1 HEAD \
             | grep '^glue-scripts/dev/' || true > changed_files.txt
           
           if [ ! -s changed_files.txt ]; then
@@ -39,11 +41,45 @@ jobs:
           echo "Files to upload:"
           cat changed_files.txt
 
-      - name: Package Lambda function
+      - name: Detect changed Lambda functions
+        id: lambda_changes
+        run: |
+          git diff --name-only HEAD~1 HEAD \
+           | grep '^lambda/dev/' \
+           | grep -v '^lambda/dev/build/' \
+           | awk -F/ '{print $3}' \
+           | sort -u > changed_lambdas.txt || true
+
+          if [ ! -s changed_lambdas.txt ]; then 
+            echo "No Lambda code changes detected" 
+          else 
+            echo "Changed Lambda functions:" 
+            cat changed_lambdas.txt
+          fi
+
+      - name: Package changed Lambda functions
         run: |
          mkdir -p lambda/dev/build
-         cd lambda/dev/file-listener
-         zip -r ../build/file_listener.zip .
+
+         if [ ! -s changed_lambdas.txt ]; then
+           echo "Skipping Lambda packaging (no changes)"
+           exit 0
+         fi
+
+         while read lambda_name; do
+           echo "Packaging Lambda: $lambda_name"
+
+           cd lambda/dev/$lambda_name
+           zip -r ../build/${lambda_name}.zip .
+           cd - >/dev/null
+
+         done < changed_lambdas.txt
+
+      # - name: Package Lambda function
+      #   run: |
+      #    mkdir -p lambda/dev/build
+      #    cd lambda/dev/file-listener
+      #    zip -r ../build/file_listener.zip .
 
       - name: Show Lambda artifact
         run: ls -lh lambda/dev/build

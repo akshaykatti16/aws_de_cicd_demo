@@ -87,3 +87,17 @@ module "file_listener_lambda" {
   glue_job_name  = module.payments_glue_job.job_name
   lambda_role_arn  = var.lambda_role_arn
 }
+
+####################################
+# lambda function for orders JOB #
+####################################
+
+module "db_listener_lambda" {
+  source = "../../modules/lambda-function"
+
+  function_name  = "db-listener-dev"
+  handler        = "handler.lambda_handler"
+  zip_path       = "${path.module}/../../lambda/dev/build/db_listener.zip"
+  glue_job_name  = module.orders_glue_job.job_name
+  lambda_role_arn  = var.lambda_role_arn
+}
