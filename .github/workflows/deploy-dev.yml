@@ -62,13 +62,17 @@ jobs:
           mkdir -p lambda/dev/build
 
           for d in lambda/dev/*/ ; do
-            name=$(basename $d)
+            name=$(basename "$d")
+
+            if [ "$name" = "build" ]; then
+              continue
+            fi
+
             echo "Packaging Lambda: $name"
-            cd $d
+            cd "$d"
             zip -r ../build/${name}.zip .
             cd - >/dev/null
           done
-
       # - name: Package changed Lambda functions
       #   run: |
       #    mkdir -p lambda/dev/build
