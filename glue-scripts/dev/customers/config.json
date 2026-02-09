@@ -1,4 +1,4 @@
 {
   "truncate_before_load": true,
-  "target_table": "gold_customers"
+  "target_table": "gold_customers_db"
 }

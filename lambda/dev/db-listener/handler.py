@@ -4,7 +4,7 @@ import os
 glue = boto3.client("glue")
 
 def lambda_handler(event, context):
-    print("new lambda func")
+    print("new lambda func..")
     print("Event:", event)
 
     response = glue.start_job_run(

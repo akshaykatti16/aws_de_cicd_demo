@@ -60,43 +60,15 @@ jobs:
       - name: Package ALL Lambda functions
         run: |
           mkdir -p lambda/dev/build
+          
+          cd lambda/dev/file-listener
+          zip -r ../build/file-listener.zip .
+          cd -
 
-          for d in lambda/dev/*/ ; do
-            name=$(basename "$d")
-
-            if [ "$name" = "build" ]; then
-              continue
-            fi
-
-            echo "Packaging Lambda: $name"
-            cd "$d"
-            zip -r ../build/${name}.zip .
-            cd - >/dev/null
-          done
-      # - name: Package changed Lambda functions
-      #   run: |
-      #    mkdir -p lambda/dev/build
-
-      #    if [ ! -s changed_lambdas.txt ]; then
-      #      echo "Skipping Lambda packaging (no changes)"
-      #      exit 0
-      #    fi
-
-      #    while read lambda_name; do
-      #      echo "Packaging Lambda: $lambda_name"
-
-      #      cd lambda/dev/$lambda_name
-      #      zip -r ../build/${lambda_name}.zip .
-      #      cd - >/dev/null
-
-      #    done < changed_lambdas.txt
-
-      # - name: Package Lambda function
-      #   run: |
-      #    mkdir -p lambda/dev/build
-      #    cd lambda/dev/file-listener
-      #    zip -r ../build/file_listener.zip .
-
+          cd lambda/dev/db-listener
+          zip -r ../build/db-listener.zip .
+          cd -
+           
       - name: Show Lambda artifact
         run: ls -lh lambda/dev/build
          

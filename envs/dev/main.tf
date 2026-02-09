@@ -83,7 +83,7 @@ module "file_listener_lambda" {
 
   function_name  = "file-listener-dev"
   handler        = "handler.lambda_handler"
-  zip_path       = "${path.module}/../../lambda/dev/build/file_listener.zip"
+  zip_path       = "${path.module}/../../lambda/dev/build/file-listener.zip"
   glue_job_name  = module.payments_glue_job.job_name
   lambda_role_arn  = var.lambda_role_arn
 }
@@ -97,7 +97,7 @@ module "db_listener_lambda" {
 
   function_name  = "db-listener-dev"
   handler        = "handler.lambda_handler"
-  zip_path       = "${path.module}/../../lambda/dev/build/db_listener.zip"
+  zip_path       = "${path.module}/../../lambda/dev/build/db-listener.zip"
   glue_job_name  = module.orders_glue_job.job_name
   lambda_role_arn  = var.lambda_role_arn
 }
