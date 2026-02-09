@@ -57,23 +57,35 @@ jobs:
             cat changed_lambdas.txt
           fi
 
-      - name: Package changed Lambda functions
+      - name: Package ALL Lambda functions
         run: |
-         mkdir -p lambda/dev/build
+          mkdir -p lambda/dev/build
 
-         if [ ! -s changed_lambdas.txt ]; then
-           echo "Skipping Lambda packaging (no changes)"
-           exit 0
-         fi
+          for d in lambda/dev/*/ ; do
+            name=$(basename $d)
+            echo "Packaging Lambda: $name"
+            cd $d
+            zip -r ../build/${name}.zip .
+            cd - >/dev/null
+          done
 
-         while read lambda_name; do
-           echo "Packaging Lambda: $lambda_name"
+      # - name: Package changed Lambda functions
+      #   run: |
+      #    mkdir -p lambda/dev/build
 
-           cd lambda/dev/$lambda_name
-           zip -r ../build/${lambda_name}.zip .
-           cd - >/dev/null
+      #    if [ ! -s changed_lambdas.txt ]; then
+      #      echo "Skipping Lambda packaging (no changes)"
+      #      exit 0
+      #    fi
 
-         done < changed_lambdas.txt
+      #    while read lambda_name; do
+      #      echo "Packaging Lambda: $lambda_name"
+
+      #      cd lambda/dev/$lambda_name
+      #      zip -r ../build/${lambda_name}.zip .
+      #      cd - >/dev/null
+
+      #    done < changed_lambdas.txt
 
       # - name: Package Lambda function
       #   run: |
