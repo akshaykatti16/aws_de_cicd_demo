@@ -13,3 +13,8 @@ variable "glue_role_arn" {
 variable "lambda_role_arn" {
   type = string
 }
+
+variable "step_function_role_arn" {
+  description = "Existing Step Functions execution role ARN"
+  type        = string
+}
