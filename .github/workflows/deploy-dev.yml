@@ -71,6 +71,19 @@ jobs:
            
       - name: Show Lambda artifact
         run: ls -lh lambda/dev/build
+
+      - name: Detect changed Step Functions
+        id: sfn_changes
+        run: |
+          git diff --name-only HEAD~1 HEAD \
+            | grep '^step-functions/dev/' > changed_sfns.txt || true
+
+          if [ ! -s changed_sfns.txt ]; then
+            echo "No Step Function changes detected"
+          else
+            echo "Changed Step Functions:"
+            cat changed_sfns.txt
+          fi
          
       - name: Terraform Init
         working-directory: envs/dev
