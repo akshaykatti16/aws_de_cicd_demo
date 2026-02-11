@@ -1,0 +1,65 @@
+{
+  "Comment": "Trigger orders & Customers glue pipeline",
+  "StartAt": "orders_pipeline",
+  "States": {
+    "orders_pipeline": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "orders-dev"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "IntervalSeconds": 120,
+          "BackoffRate": 2.0,
+          "MaxAttempts": 3
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "NotifyFailure"
+        }
+      ],
+      "Next": "customers_pipeline"
+    },
+
+    "customers_pipeline": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "customers-dev"
+      },
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "NotifyFailure"
+        }
+      ],
+      "Next": "NotifySuccess"
+    },
+
+    "NotifyFailure": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:${region}:${account_id}:data-pipeline-alerts",
+        "Subject": "❌ Data Pipeline Failed",
+        "Message.$": "States.Format('Pipeline failed!!! \n\nExecution: {}\nState Machine: {}', $$.Execution.Name, $$.StateMachine.Name)"
+      },
+      "End": true
+    },
+
+    "NotifySuccess": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:${region}:${account_id}:data-pipeline-alerts",
+        "Subject": "✅ Data Pipeline Success",
+        "Message.$": "States.Format('Pipeline completed successfully🎉\n\nExecution: {}\nState Machine: {}', $$.Execution.Name, $$.StateMachine.Name)"
+      },
+      "End": true
+    }
+  }
+}
